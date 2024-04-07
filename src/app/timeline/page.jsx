@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import img1 from '../../assets/capture.png'
-import img2 from '../../assets/capture1.png'
+import img1 from '../../../public/capture.png'
+import img2 from '../../../public/capture1.png'
 
 const page = () => {
   return (
