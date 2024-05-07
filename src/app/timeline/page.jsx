@@ -44,7 +44,7 @@ const page = () => {
         
         try {
             const response = await axios.request(options);
-            console.log(response.data.sentiment);
+            // console.log(response.data.sentiment);
             return response.data.sentiment;
         } catch (error) {
             console.error(error);
@@ -69,6 +69,47 @@ const page = () => {
         localStorage.setItem("email", "");
         router.push('/')
     }
+
+    const handlePositive = async () => {
+        const sentiment = await getResult("I am feeling good today");
+        setPosts([...posts, {['email']: email, ['content']: "I am feeling good today", ['sentiment']: sentiment }])
+    }
+    const handleNegative = async () => {
+        const sentiment = await getResult("I am not feeling good today");
+        setPosts([...posts, {['email']: email, ['content']: "I am not feeling good today", ['sentiment']: sentiment }])
+    }
+    const handleNeutral = async () => {
+        const sentiment = await getResult("My name is Adil");
+        setPosts([...posts, {['email']: email, ['content']: "My name is Adil", ['sentiment']: sentiment }])
+    }
+    const handleError = () => {
+        const options = {
+            method: 'POST',
+            url: 'https://text-analysis12.p.rapidapi.com/sentiment-analysis/api/v1.1',
+            headers: {
+              'content-type': 'application/json',
+              'X-RapidAPI-Key': 'ae5456417dmsh401fb135c4d1487p12e642jsn2a370e4bfa01',
+              'X-RapidAPI-Host': 'text-analysis12.p.rapidapi.com'
+            },
+            data: {
+              language: 'english',
+              text: "I am great"
+            }
+          };
+          
+          try {
+              const response = axios.request(options);
+              console.log(response);
+              if(!response?.data?.sentiment)
+              {
+                throw new Error("Api Failed");
+              }
+          } catch (error) {
+              console.error(error);
+              alert("Could not analyze sentiment. Please try again later!");
+          }
+    }
+
   return (
     <div className="w-full  px-40 flex flex-col items-start bg-[#C8C8BE] py-20 h-full">
         <h1 className='w-full text-center text-8xl my-10 font-semibold'>Timeline</h1>
@@ -90,6 +131,10 @@ const page = () => {
             <input type="text" placeholder="Enter Content" value={enteredContent} onChange={(e)=>{setEnteredContent(e.target.value)}} className="border-2 my-2 border-gray-600 rounded-xl p-2" />
 
             <input type="button" value="Add a Post" onClick={handleAddPost} className="bg-white rounded-full my-2 p-3 hover:cursor-pointer px-10" />
+            <input type="button" value="Test positive response" onClick={handlePositive} className="bg-white rounded-full my-2 p-3 hover:cursor-pointer px-10" />
+            <input type="button" value="Test negative response" onClick={handleNegative} className="bg-white rounded-full my-2 p-3 hover:cursor-pointer px-10" />
+            <input type="button" value="Test neutral response" onClick={handleNeutral} className="bg-white rounded-full my-2 p-3 hover:cursor-pointer px-10" />
+            <input type="button" value="Simulate Api Error" onClick={handleError} className="bg-white rounded-full my-2 p-3 hover:cursor-pointer px-10" />
             <input type="button" value="Logout" onClick={handleLogout} className="bg-white rounded-full p-3 my-2 hover:cursor-pointer px-10" />
         </div>
 
